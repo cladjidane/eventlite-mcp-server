@@ -39,13 +39,14 @@ Puis configurez les variables d'environnement.
 | Variable | Description |
 |----------|-------------|
 | `EVENTLITE_API_URL` | URL de votre instance EventLite (ex: `https://events.example.com`) |
-| `EVENTLITE_API_KEY` | Clé API générée avec `base64(email:NEXTAUTH_SECRET)` |
+| `EVENTLITE_API_KEY` | Clé API générée depuis le dashboard |
 
 ### Générer une API Key
 
-```bash
-echo -n "votre-email@example.com:VOTRE_NEXTAUTH_SECRET" | base64
-```
+1. Connectez-vous à votre instance EventLite
+2. Allez dans **Paramètres → Clés API**
+3. Créez une nouvelle clé (ex: "MCP Server")
+4. Copiez le token (format: `evl_xxxxxxxxxxxxx`)
 
 ## Outils disponibles
 
