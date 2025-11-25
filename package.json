@@ -1,0 +1,43 @@
+{
+  "name": "eventlite-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for EventLite - Manage events and registrations with Claude",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "eventlite-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "eventlite",
+    "events",
+    "registrations",
+    "ai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cladjidane/eventlite-mcp-server.git"
+  },
+  "author": "EventLite",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
