@@ -164,4 +164,10 @@ export class EventLiteClient {
       input
     );
   }
+
+  // ==================== UPLOAD ====================
+
+  async uploadImage(imageUrl: string): Promise<ApiResponse<{ url: string; pathname: string }>> {
+    return this.request("POST", "/api/v1/upload", { url: imageUrl });
+  }
 }

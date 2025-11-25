@@ -74,5 +74,9 @@ export class EventLiteClient {
         const query = preview ? "?preview=true" : "";
         return this.request("POST", `/api/v1/events/${encodeURIComponent(eventIdOrSlug)}/notify${query}`, input);
     }
+    // ==================== UPLOAD ====================
+    async uploadImage(imageUrl) {
+        return this.request("POST", "/api/v1/upload", { url: imageUrl });
+    }
 }
 //# sourceMappingURL=client.js.map

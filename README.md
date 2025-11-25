@@ -74,6 +74,12 @@ Puis configurez les variables d'environnement.
 |-------|-------------|
 | `send_notification` | Envoyer un email aux participants |
 
+### Upload
+
+| Outil | Description |
+|-------|-------------|
+| `upload_image` | Uploader une image depuis une URL pour l'utiliser comme couverture |
+
 ## Exemples d'utilisation
 
 Une fois configuré, vous pouvez simplement parler à Claude :
@@ -83,6 +89,7 @@ Une fois configuré, vous pouvez simplement parler à Claude :
 - *"Combien de personnes sont inscrites au meetup ?"*
 - *"Envoie un rappel aux inscrits confirmés"*
 - *"Publie l'événement workshop-react"*
+- *"Ajoute cette image comme couverture de l'événement : https://example.com/image.jpg"*
 
 ## Développement local
 

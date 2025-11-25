@@ -37,5 +37,9 @@ export declare class EventLiteClient {
         };
     }>;
     sendNotification(eventIdOrSlug: string, input: NotificationInput, preview?: boolean): Promise<ApiResponse<NotificationResult>>;
+    uploadImage(imageUrl: string): Promise<ApiResponse<{
+        url: string;
+        pathname: string;
+    }>>;
 }
 //# sourceMappingURL=client.d.ts.map

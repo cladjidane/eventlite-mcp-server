@@ -19,6 +19,7 @@ import {
   registerAttendeeSchema,
   unregisterAttendeeSchema,
   sendNotificationSchema,
+  uploadImageSchema,
 } from "./tools.js";
 
 // Configuration from environment variables
@@ -300,6 +301,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: "text",
               text: `📧 Notification sent!\n\n**Sent:** ${data.sent}\n**Failed:** ${data.failed}\n**Target:** ${data.target}`,
+            },
+          ],
+        };
+      }
+
+      // ==================== UPLOAD ====================
+
+      case "upload_image": {
+        const input = uploadImageSchema.parse(args);
+        const result = await client.uploadImage(input.url);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ Image uploaded successfully!\n\n**URL:** ${result.data.url}\n\nYou can now use this URL as the \`coverImage\` when creating or updating an event.`,
             },
           ],
         };

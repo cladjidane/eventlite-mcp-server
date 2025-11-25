@@ -70,7 +70,7 @@ export interface EventUpdateInput {
     title?: string;
     subtitle?: string;
     description?: string;
-    coverImage?: string;
+    coverImage?: string | null;
     mode?: "ONLINE" | "IN_PERSON";
     location?: string;
     latitude?: number;

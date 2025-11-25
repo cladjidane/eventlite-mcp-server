@@ -3,7 +3,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
 import { EventLiteClient } from "./client.js";
-import { tools, listEventsSchema, getEventSchema, createEventSchema, updateEventSchema, deleteEventSchema, listRegistrationsSchema, registerAttendeeSchema, unregisterAttendeeSchema, sendNotificationSchema, } from "./tools.js";
+import { tools, listEventsSchema, getEventSchema, createEventSchema, updateEventSchema, deleteEventSchema, listRegistrationsSchema, registerAttendeeSchema, unregisterAttendeeSchema, sendNotificationSchema, uploadImageSchema, } from "./tools.js";
 // Configuration from environment variables
 const API_URL = process.env.EVENTLITE_API_URL || "http://localhost:3000";
 const API_KEY = process.env.EVENTLITE_API_KEY;
@@ -241,6 +241,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                         {
                             type: "text",
                             text: `📧 Notification sent!\n\n**Sent:** ${data.sent}\n**Failed:** ${data.failed}\n**Target:** ${data.target}`,
+                        },
+                    ],
+                };
+            }
+            // ==================== UPLOAD ====================
+            case "upload_image": {
+                const input = uploadImageSchema.parse(args);
+                const result = await client.uploadImage(input.url);
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: `✅ Image uploaded successfully!\n\n**URL:** ${result.data.url}\n\nYou can now use this URL as the \`coverImage\` when creating or updating an event.`,
                         },
                     ],
                 };

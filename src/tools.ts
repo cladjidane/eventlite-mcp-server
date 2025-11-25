@@ -87,6 +87,10 @@ export const tools = [
           enum: ["DRAFT", "PUBLISHED"],
           description: "Initial status (default: DRAFT)",
         },
+        coverImage: {
+          type: "string",
+          description: "URL of the cover image (use upload_image first to get the URL)",
+        },
       },
       required: ["title", "mode", "startAt"],
     },
@@ -114,6 +118,10 @@ export const tools = [
         status: {
           type: "string",
           enum: ["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"],
+        },
+        coverImage: {
+          type: "string",
+          description: "URL of the cover image (use upload_image first to get the URL)",
         },
       },
       required: ["id"],
@@ -244,6 +252,23 @@ export const tools = [
       required: ["eventId", "subject", "message"],
     },
   },
+
+  // Upload
+  {
+    name: "upload_image",
+    description:
+      "Upload an image from a URL and get back a hosted URL that can be used as coverImage for events.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        url: {
+          type: "string",
+          description: "URL of the image to upload (must be publicly accessible)",
+        },
+      },
+      required: ["url"],
+    },
+  },
 ] as const;
 
 // ==================== INPUT VALIDATION SCHEMAS ====================
@@ -261,6 +286,7 @@ export const createEventSchema = z.object({
   title: z.string().min(3).max(100),
   subtitle: z.string().max(200).optional(),
   description: z.string().max(5000).optional(),
+  coverImage: z.string().url().optional(),
   mode: z.enum(["ONLINE", "IN_PERSON"]),
   location: z.string().optional(),
   startAt: z.string(),
@@ -275,6 +301,7 @@ export const updateEventSchema = z.object({
   title: z.string().min(3).max(100).optional(),
   subtitle: z.string().max(200).optional(),
   description: z.string().max(5000).optional(),
+  coverImage: z.string().url().optional().nullable(),
   mode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
   location: z.string().optional(),
   startAt: z.string().optional(),
@@ -313,4 +340,8 @@ export const sendNotificationSchema = z.object({
   target: z.enum(["all", "confirmed", "waitlist"]).optional(),
   includeEventDetails: z.boolean().optional(),
   preview: z.boolean().optional(),
+});
+
+export const uploadImageSchema = z.object({
+  url: z.string().url(),
 });

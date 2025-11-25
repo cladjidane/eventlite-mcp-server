@@ -77,6 +77,10 @@ export declare const tools: readonly [{
                 readonly enum: readonly ["DRAFT", "PUBLISHED"];
                 readonly description: "Initial status (default: DRAFT)";
             };
+            readonly coverImage: {
+                readonly type: "string";
+                readonly description: "URL of the cover image (use upload_image first to get the URL)";
+            };
         };
         readonly required: readonly ["title", "mode", "startAt"];
     };
@@ -121,6 +125,10 @@ export declare const tools: readonly [{
             readonly status: {
                 readonly type: "string";
                 readonly enum: readonly ["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"];
+            };
+            readonly coverImage: {
+                readonly type: "string";
+                readonly description: "URL of the cover image (use upload_image first to get the URL)";
             };
         };
         readonly required: readonly ["id"];
@@ -236,6 +244,19 @@ export declare const tools: readonly [{
         };
         readonly required: readonly ["eventId", "subject", "message"];
     };
+}, {
+    readonly name: "upload_image";
+    readonly description: "Upload an image from a URL and get back a hosted URL that can be used as coverImage for events.";
+    readonly inputSchema: {
+        readonly type: "object";
+        readonly properties: {
+            readonly url: {
+                readonly type: "string";
+                readonly description: "URL of the image to upload (must be publicly accessible)";
+            };
+        };
+        readonly required: readonly ["url"];
+    };
 }];
 export declare const listEventsSchema: z.ZodObject<{
     status: z.ZodOptional<z.ZodEnum<["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"]>>;
@@ -258,6 +279,7 @@ export declare const createEventSchema: z.ZodObject<{
     title: z.ZodString;
     subtitle: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
+    coverImage: z.ZodOptional<z.ZodString>;
     mode: z.ZodEnum<["ONLINE", "IN_PERSON"]>;
     location: z.ZodOptional<z.ZodString>;
     startAt: z.ZodString;
@@ -273,6 +295,7 @@ export declare const createEventSchema: z.ZodObject<{
     status?: "DRAFT" | "PUBLISHED" | undefined;
     subtitle?: string | undefined;
     description?: string | undefined;
+    coverImage?: string | undefined;
     location?: string | undefined;
     endAt?: string | undefined;
     capacity?: number | undefined;
@@ -284,6 +307,7 @@ export declare const createEventSchema: z.ZodObject<{
     status?: "DRAFT" | "PUBLISHED" | undefined;
     subtitle?: string | undefined;
     description?: string | undefined;
+    coverImage?: string | undefined;
     location?: string | undefined;
     endAt?: string | undefined;
     capacity?: number | undefined;
@@ -293,6 +317,7 @@ export declare const updateEventSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
     subtitle: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
+    coverImage: z.ZodNullable<z.ZodOptional<z.ZodString>>;
     mode: z.ZodOptional<z.ZodEnum<["ONLINE", "IN_PERSON"]>>;
     location: z.ZodOptional<z.ZodString>;
     startAt: z.ZodOptional<z.ZodString>;
@@ -309,6 +334,7 @@ export declare const updateEventSchema: z.ZodObject<{
     startAt?: string | undefined;
     subtitle?: string | undefined;
     description?: string | undefined;
+    coverImage?: string | null | undefined;
     location?: string | undefined;
     endAt?: string | undefined;
     capacity?: number | undefined;
@@ -321,6 +347,7 @@ export declare const updateEventSchema: z.ZodObject<{
     startAt?: string | undefined;
     subtitle?: string | undefined;
     description?: string | undefined;
+    coverImage?: string | null | undefined;
     location?: string | undefined;
     endAt?: string | undefined;
     capacity?: number | undefined;
@@ -392,5 +419,12 @@ export declare const sendNotificationSchema: z.ZodObject<{
     target?: "all" | "confirmed" | "waitlist" | undefined;
     includeEventDetails?: boolean | undefined;
     preview?: boolean | undefined;
+}>;
+export declare const uploadImageSchema: z.ZodObject<{
+    url: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    url: string;
+}, {
+    url: string;
 }>;
 //# sourceMappingURL=tools.d.ts.map
