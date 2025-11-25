@@ -6,8 +6,7 @@ Serveur MCP (Model Context Protocol) pour [EventLite](https://github.com/cladjid
 
 ### Prérequis
 
-1. [Node.js](https://nodejs.org/) v18 ou supérieur
-2. Un compte EventLite avec une clé API
+Un compte EventLite avec une clé API.
 
 ### Générer une API Key
 
@@ -16,22 +15,65 @@ Serveur MCP (Model Context Protocol) pour [EventLite](https://github.com/cladjid
 3. Créez une nouvelle clé (ex: "MCP Server")
 4. Copiez le token (format: `evl_xxxxxxxxxxxxx`) — il n'est affiché qu'une seule fois !
 
-### Option 1 : Installation globale (recommandé)
+---
+
+### Option 1 : Binaire standalone (recommandé)
+
+**Aucune installation requise** — téléchargez simplement l'exécutable pour votre système.
+
+1. Téléchargez le binaire depuis [GitHub Releases](https://github.com/cladjidane/eventlite-mcp-server/releases) :
+   - **macOS Apple Silicon** : `eventlite-mcp-darwin-arm64`
+   - **macOS Intel** : `eventlite-mcp-darwin-x64`
+   - **Windows** : `eventlite-mcp-windows-x64.exe`
+   - **Linux** : `eventlite-mcp-linux-x64`
+
+2. Placez-le dans un dossier de votre choix (ex: `~/eventlite-mcp/`)
+
+3. **macOS/Linux** : Rendez-le exécutable
+   ```bash
+   chmod +x ~/eventlite-mcp/eventlite-mcp-darwin-arm64
+   ```
+
+4. Ajoutez dans votre fichier de configuration Claude Desktop :
+
+   **macOS** : `~/Library/Application Support/Claude/claude_desktop_config.json`
+   **Windows** : `%APPDATA%\Claude\claude_desktop_config.json`
+
+   ```json
+   {
+     "mcpServers": {
+       "eventlite": {
+         "command": "/Users/VOTRE_NOM/eventlite-mcp/eventlite-mcp-darwin-arm64",
+         "env": {
+           "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
+           "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
+         }
+       }
+     }
+   }
+   ```
+
+   > Remplacez le chemin par l'emplacement réel du binaire sur votre machine.
+
+5. Redémarrez Claude Desktop.
+
+---
+
+### Option 2 : Via npm (nécessite Node.js)
+
+Si vous avez Node.js v18+ installé :
 
 ```bash
 npm install -g github:cladjidane/eventlite-mcp-server
 ```
 
-Puis ajoutez dans votre fichier de configuration Claude Desktop :
-
-**macOS** : `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows** : `%APPDATA%\Claude\claude_desktop_config.json`
+Configuration Claude Desktop :
 
 ```json
 {
   "mcpServers": {
     "eventlite": {
-      "command": "eventlite-mcp-server",
+      "command": "eventlite-mcp",
       "env": {
         "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
         "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
@@ -41,40 +83,7 @@ Puis ajoutez dans votre fichier de configuration Claude Desktop :
 }
 ```
 
-### Option 2 : Installation locale
-
-```bash
-# Cloner le repo
-git clone https://github.com/cladjidane/eventlite-mcp-server.git
-cd eventlite-mcp-server
-
-# Installer et compiler
-npm install
-npm run build
-```
-
-Puis dans la configuration Claude Desktop, utilisez le chemin absolu :
-
-```json
-{
-  "mcpServers": {
-    "eventlite": {
-      "command": "node",
-      "args": ["/chemin/complet/vers/eventlite-mcp-server/dist/index.js"],
-      "env": {
-        "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
-        "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
-      }
-    }
-  }
-}
-```
-
-> **Note** : Remplacez `/chemin/complet/vers/` par le chemin réel sur votre machine.
-
-### Après installation
-
-Redémarrez Claude Desktop pour charger le serveur MCP.
+---
 
 ## Configuration
 
@@ -130,8 +139,8 @@ Une fois configuré, vous pouvez simplement parler à Claude :
 
 ### Le serveur ne démarre pas
 
-- Vérifiez que Node.js v18+ est installé : `node --version`
-- Vérifiez que la clé API est valide et non expirée
+- Vérifiez que le binaire est exécutable (`chmod +x` sur macOS/Linux)
+- Vérifiez que la clé API est valide
 - Consultez les logs Claude Desktop pour voir les erreurs
 
 ### Erreur "Unauthorized"
@@ -143,6 +152,7 @@ Une fois configuré, vous pouvez simplement parler à Claude :
 
 - Redémarrez complètement Claude Desktop
 - Vérifiez la syntaxe JSON de votre fichier de configuration
+- Vérifiez que le chemin vers le binaire est correct
 
 ## Développement
 
@@ -154,11 +164,14 @@ cd eventlite-mcp-server
 # Installer les dépendances
 npm install
 
-# Build
+# Build TypeScript
 npm run build
 
 # Tester localement
 EVENTLITE_API_URL=http://localhost:3333 EVENTLITE_API_KEY=evl_xxx node dist/index.js
+
+# Compiler les binaires (nécessite Bun)
+bun run build:binary
 ```
 
 ## Licence
