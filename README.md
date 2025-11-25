@@ -4,9 +4,25 @@ Serveur MCP (Model Context Protocol) pour [EventLite](https://github.com/cladjid
 
 ## Installation
 
-### Avec Claude Desktop
+### Prérequis
 
-Ajoutez cette configuration dans votre fichier `claude_desktop_config.json` :
+1. [Node.js](https://nodejs.org/) v18 ou supérieur
+2. Un compte EventLite avec une clé API
+
+### Générer une API Key
+
+1. Connectez-vous sur [eventlite.context-collective.org](https://eventlite.context-collective.org)
+2. Allez dans **Paramètres → Clés API**
+3. Créez une nouvelle clé (ex: "MCP Server")
+4. Copiez le token (format: `evl_xxxxxxxxxxxxx`) — il n'est affiché qu'une seule fois !
+
+### Option 1 : Installation globale (recommandé)
+
+```bash
+npm install -g github:cladjidane/eventlite-mcp-server
+```
+
+Puis ajoutez dans votre fichier de configuration Claude Desktop :
 
 **macOS** : `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows** : `%APPDATA%\Claude\claude_desktop_config.json`
@@ -15,8 +31,7 @@ Ajoutez cette configuration dans votre fichier `claude_desktop_config.json` :
 {
   "mcpServers": {
     "eventlite": {
-      "command": "npx",
-      "args": ["github:cladjidane/eventlite-mcp-server"],
+      "command": "eventlite-mcp-server",
       "env": {
         "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
         "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
@@ -26,13 +41,40 @@ Ajoutez cette configuration dans votre fichier `claude_desktop_config.json` :
 }
 ```
 
-### Avec Claude Code
+### Option 2 : Installation locale
 
 ```bash
-claude mcp add eventlite -- npx github:cladjidane/eventlite-mcp-server
+# Cloner le repo
+git clone https://github.com/cladjidane/eventlite-mcp-server.git
+cd eventlite-mcp-server
+
+# Installer et compiler
+npm install
+npm run build
 ```
 
-Puis configurez les variables d'environnement.
+Puis dans la configuration Claude Desktop, utilisez le chemin absolu :
+
+```json
+{
+  "mcpServers": {
+    "eventlite": {
+      "command": "node",
+      "args": ["/chemin/complet/vers/eventlite-mcp-server/dist/index.js"],
+      "env": {
+        "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
+        "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+> **Note** : Remplacez `/chemin/complet/vers/` par le chemin réel sur votre machine.
+
+### Après installation
+
+Redémarrez Claude Desktop pour charger le serveur MCP.
 
 ## Configuration
 
@@ -40,13 +82,6 @@ Puis configurez les variables d'environnement.
 |----------|-------------|
 | `EVENTLITE_API_URL` | `https://eventlite.context-collective.org` |
 | `EVENTLITE_API_KEY` | Clé API générée depuis le dashboard (format: `evl_xxx`) |
-
-### Générer une API Key
-
-1. Connectez-vous sur [eventlite.context-collective.org](https://eventlite.context-collective.org)
-2. Allez dans **Paramètres → Clés API**
-3. Créez une nouvelle clé (ex: "MCP Server")
-4. Copiez le token (format: `evl_xxxxxxxxxxxxx`)
 
 ## Outils disponibles
 
@@ -56,7 +91,7 @@ Puis configurez les variables d'environnement.
 |-------|-------------|
 | `list_events` | Lister les événements (filtrer par statut) |
 | `get_event` | Détails d'un événement par ID ou slug |
-| `create_event` | Créer un événement |
+| `create_event` | Créer un événement (avec `coverImage` optionnel) |
 | `update_event` | Modifier un événement |
 | `delete_event` | Supprimer un événement |
 
@@ -91,7 +126,25 @@ Une fois configuré, vous pouvez simplement parler à Claude :
 - *"Publie l'événement workshop-react"*
 - *"Ajoute cette image comme couverture de l'événement : https://example.com/image.jpg"*
 
-## Développement local
+## Dépannage
+
+### Le serveur ne démarre pas
+
+- Vérifiez que Node.js v18+ est installé : `node --version`
+- Vérifiez que la clé API est valide et non expirée
+- Consultez les logs Claude Desktop pour voir les erreurs
+
+### Erreur "Unauthorized"
+
+- Vérifiez que `EVENTLITE_API_KEY` est correctement configuré
+- Générez une nouvelle clé API si nécessaire
+
+### Les outils n'apparaissent pas dans Claude
+
+- Redémarrez complètement Claude Desktop
+- Vérifiez la syntaxe JSON de votre fichier de configuration
+
+## Développement
 
 ```bash
 # Cloner le repo
@@ -105,7 +158,7 @@ npm install
 npm run build
 
 # Tester localement
-EVENTLITE_API_URL=http://localhost:3000 EVENTLITE_API_KEY=xxx node dist/index.js
+EVENTLITE_API_URL=http://localhost:3333 EVENTLITE_API_KEY=evl_xxx node dist/index.js
 ```
 
 ## Licence
