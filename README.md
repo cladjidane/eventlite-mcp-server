@@ -29,9 +29,17 @@ Un compte EventLite avec une clé API.
 
 2. Placez-le dans un dossier de votre choix (ex: `~/eventlite-mcp/`)
 
-3. **macOS/Linux** : Rendez-le exécutable
+3. **macOS** : Autorisez l'exécution (Gatekeeper bloque les binaires non signés)
    ```bash
+   # Supprimer la quarantaine
+   xattr -d com.apple.quarantine ~/eventlite-mcp/eventlite-mcp-darwin-arm64
+   # Rendre exécutable
    chmod +x ~/eventlite-mcp/eventlite-mcp-darwin-arm64
+   ```
+
+   **Linux** : Rendez-le exécutable
+   ```bash
+   chmod +x ~/eventlite-mcp/eventlite-mcp-linux-x64
    ```
 
 4. Ajoutez dans votre fichier de configuration Claude Desktop :
