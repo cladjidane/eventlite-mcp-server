@@ -18,7 +18,7 @@ Ajoutez cette configuration dans votre fichier `claude_desktop_config.json` :
       "command": "npx",
       "args": ["github:cladjidane/eventlite-mcp-server"],
       "env": {
-        "EVENTLITE_API_URL": "https://eventlite.heavenlight.fr",
+        "EVENTLITE_API_URL": "https://eventlite.context-collective.org",
         "EVENTLITE_API_KEY": "evl_xxxxxxxxxxxxx"
       }
     }
@@ -38,12 +38,12 @@ Puis configurez les variables d'environnement.
 
 | Variable | Description |
 |----------|-------------|
-| `EVENTLITE_API_URL` | `https://eventlite.heavenlight.fr` (instance de production) |
+| `EVENTLITE_API_URL` | `https://eventlite.context-collective.org` |
 | `EVENTLITE_API_KEY` | Clé API générée depuis le dashboard (format: `evl_xxx`) |
 
 ### Générer une API Key
 
-1. Connectez-vous sur [eventlite.heavenlight.fr](https://eventlite.heavenlight.fr)
+1. Connectez-vous sur [eventlite.context-collective.org](https://eventlite.context-collective.org)
 2. Allez dans **Paramètres → Clés API**
 3. Créez une nouvelle clé (ex: "MCP Server")
 4. Copiez le token (format: `evl_xxxxxxxxxxxxx`)
