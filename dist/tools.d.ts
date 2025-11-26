@@ -246,7 +246,7 @@ export declare const tools: readonly [{
     };
 }, {
     readonly name: "upload_image";
-    readonly description: "Upload an image from a URL and get back a hosted URL that can be used as coverImage for events.";
+    readonly description: "Upload an image and get back a hosted URL that can be used as coverImage for events. Provide either a public URL or base64-encoded image data.";
     readonly inputSchema: {
         readonly type: "object";
         readonly properties: {
@@ -254,8 +254,11 @@ export declare const tools: readonly [{
                 readonly type: "string";
                 readonly description: "URL of the image to upload (must be publicly accessible)";
             };
+            readonly base64: {
+                readonly type: "string";
+                readonly description: "Base64-encoded image data (format: data:image/png;base64,... or data:image/jpeg;base64,...)";
+            };
         };
-        readonly required: readonly ["url"];
     };
 }];
 export declare const listEventsSchema: z.ZodObject<{
@@ -420,11 +423,20 @@ export declare const sendNotificationSchema: z.ZodObject<{
     includeEventDetails?: boolean | undefined;
     preview?: boolean | undefined;
 }>;
-export declare const uploadImageSchema: z.ZodObject<{
-    url: z.ZodString;
+export declare const uploadImageSchema: z.ZodEffects<z.ZodObject<{
+    url: z.ZodOptional<z.ZodString>;
+    base64: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    url: string;
+    url?: string | undefined;
+    base64?: string | undefined;
 }, {
-    url: string;
+    url?: string | undefined;
+    base64?: string | undefined;
+}>, {
+    url?: string | undefined;
+    base64?: string | undefined;
+}, {
+    url?: string | undefined;
+    base64?: string | undefined;
 }>;
 //# sourceMappingURL=tools.d.ts.map

@@ -37,7 +37,11 @@ export declare class EventLiteClient {
         };
     }>;
     sendNotification(eventIdOrSlug: string, input: NotificationInput, preview?: boolean): Promise<ApiResponse<NotificationResult>>;
-    uploadImage(imageUrl: string): Promise<ApiResponse<{
+    uploadImageFromUrl(imageUrl: string): Promise<ApiResponse<{
+        url: string;
+        pathname: string;
+    }>>;
+    uploadImageFromBase64(base64Data: string): Promise<ApiResponse<{
         url: string;
         pathname: string;
     }>>;

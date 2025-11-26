@@ -248,7 +248,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             // ==================== UPLOAD ====================
             case "upload_image": {
                 const input = uploadImageSchema.parse(args);
-                const result = await client.uploadImage(input.url);
+                let result;
+                if (input.base64) {
+                    result = await client.uploadImageFromBase64(input.base64);
+                }
+                else if (input.url) {
+                    result = await client.uploadImageFromUrl(input.url);
+                }
+                else {
+                    throw new Error("Either 'url' or 'base64' must be provided");
+                }
                 return {
                     content: [
                         {

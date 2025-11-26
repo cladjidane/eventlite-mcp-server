@@ -167,7 +167,11 @@ export class EventLiteClient {
 
   // ==================== UPLOAD ====================
 
-  async uploadImage(imageUrl: string): Promise<ApiResponse<{ url: string; pathname: string }>> {
+  async uploadImageFromUrl(imageUrl: string): Promise<ApiResponse<{ url: string; pathname: string }>> {
     return this.request("POST", "/api/v1/upload", { url: imageUrl });
+  }
+
+  async uploadImageFromBase64(base64Data: string): Promise<ApiResponse<{ url: string; pathname: string }>> {
+    return this.request("POST", "/api/v1/upload", { base64: base64Data });
   }
 }

@@ -75,8 +75,11 @@ export class EventLiteClient {
         return this.request("POST", `/api/v1/events/${encodeURIComponent(eventIdOrSlug)}/notify${query}`, input);
     }
     // ==================== UPLOAD ====================
-    async uploadImage(imageUrl) {
+    async uploadImageFromUrl(imageUrl) {
         return this.request("POST", "/api/v1/upload", { url: imageUrl });
+    }
+    async uploadImageFromBase64(base64Data) {
+        return this.request("POST", "/api/v1/upload", { base64: base64Data });
     }
 }
 //# sourceMappingURL=client.js.map

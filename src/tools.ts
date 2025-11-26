@@ -257,7 +257,7 @@ export const tools = [
   {
     name: "upload_image",
     description:
-      "Upload an image from a URL and get back a hosted URL that can be used as coverImage for events.",
+      "Upload an image and get back a hosted URL that can be used as coverImage for events. Provide either a public URL or base64-encoded image data.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -265,8 +265,11 @@ export const tools = [
           type: "string",
           description: "URL of the image to upload (must be publicly accessible)",
         },
+        base64: {
+          type: "string",
+          description: "Base64-encoded image data (format: data:image/png;base64,... or data:image/jpeg;base64,...)",
+        },
       },
-      required: ["url"],
     },
   },
 ] as const;
@@ -343,5 +346,8 @@ export const sendNotificationSchema = z.object({
 });
 
 export const uploadImageSchema = z.object({
-  url: z.string().url(),
+  url: z.string().url().optional(),
+  base64: z.string().optional(),
+}).refine(data => data.url || data.base64, {
+  message: "Either 'url' or 'base64' must be provided",
 });
