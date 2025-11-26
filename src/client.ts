@@ -47,11 +47,17 @@ export class EventLiteClient {
 
   async listEvents(options?: {
     status?: string;
+    search?: string;
+    city?: string;
+    upcoming?: boolean;
     limit?: number;
     offset?: number;
   }): Promise<ApiResponse<Event[]>> {
     const params = new URLSearchParams();
     if (options?.status) params.set("status", options.status);
+    if (options?.search) params.set("search", options.search);
+    if (options?.city) params.set("city", options.city);
+    if (options?.upcoming) params.set("upcoming", "true");
     if (options?.limit) params.set("limit", options.limit.toString());
     if (options?.offset) params.set("offset", options.offset.toString());
 

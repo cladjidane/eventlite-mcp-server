@@ -61,7 +61,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     const capacity = e.capacity
                         ? `${e.confirmed_count || 0}/${e.capacity}`
                         : `${e.confirmed_count || 0} inscrits`;
-                    return `- **${e.title}** (${e.status})\n  📅 ${date}\n  👥 ${capacity}\n  🔗 Slug: ${e.slug}`;
+                    const publicUrl = `${API_URL}/e/${e.slug}`;
+                    return `- **${e.title}** (${e.status})\n  📅 ${date}\n  👥 ${capacity}\n  🔗 ${publicUrl}`;
                 })
                     .join("\n\n");
                 return {
@@ -85,6 +86,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     hour: "2-digit",
                     minute: "2-digit",
                 });
+                const publicUrl = `${API_URL}/e/${e.slug}`;
                 const details = [
                     `# ${e.title}`,
                     e.subtitle ? `*${e.subtitle}*` : "",
@@ -97,6 +99,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     `**Registrations:** ${e.confirmed_count || 0} confirmed${e.capacity ? ` / ${e.capacity} capacity` : ""}`,
                     e.waitlist_count ? `**Waitlist:** ${e.waitlist_count}` : "",
                     "",
+                    `**Public URL:** ${publicUrl}`,
                     `**Slug:** ${e.slug}`,
                     `**ID:** ${e.id}`,
                 ]
@@ -115,11 +118,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const input = createEventSchema.parse(args);
                 const result = await client.createEvent(input);
                 const e = result.data;
+                const publicUrl = `${API_URL}/e/${e.slug}`;
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `✅ Event created successfully!\n\n**Title:** ${e.title}\n**Slug:** ${e.slug}\n**Status:** ${e.status}\n**ID:** ${e.id}\n\nTo publish it, use update_event with status: "PUBLISHED"`,
+                            text: `✅ Event created successfully!\n\n**Title:** ${e.title}\n**URL:** ${publicUrl}\n**Status:** ${e.status}\n**ID:** ${e.id}\n\nTo publish it, use update_event with status: "PUBLISHED"`,
                         },
                     ],
                 };

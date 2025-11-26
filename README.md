@@ -106,11 +106,17 @@ Configuration Claude Desktop :
 
 | Outil | Description |
 |-------|-------------|
-| `list_events` | Lister les événements (filtrer par statut) |
+| `list_events` | Lister et rechercher des événements |
 | `get_event` | Détails d'un événement par ID ou slug |
 | `create_event` | Créer un événement (avec `coverImage` optionnel) |
 | `update_event` | Modifier un événement |
 | `delete_event` | Supprimer un événement |
+
+**Options de `list_events`** :
+- `status` : Filtrer par statut (DRAFT, PUBLISHED, CLOSED, CANCELLED)
+- `search` : Recherche dans le titre et la description
+- `city` : Filtrer par ville (ex: "Paris", "Lyon")
+- `upcoming` : Afficher uniquement les événements futurs (triés par date)
 
 ### Inscriptions
 
@@ -130,12 +136,14 @@ Configuration Claude Desktop :
 
 | Outil | Description |
 |-------|-------------|
-| `upload_image` | Uploader une image depuis une URL pour l'utiliser comme couverture |
+| `upload_image` | Uploader une image (URL publique ou base64) pour l'utiliser comme couverture |
 
 ## Exemples d'utilisation
 
 Une fois configuré, vous pouvez simplement parler à Claude :
 
+- *"Quels sont mes événements à venir ?"*
+- *"Cherche les événements sur Paris"*
 - *"Crée un meetup IA le 15 mars à 19h au WeWork Paris, max 50 personnes"*
 - *"Inscris alice@test.com au workshop React"*
 - *"Combien de personnes sont inscrites au meetup ?"*

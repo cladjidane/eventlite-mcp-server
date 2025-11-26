@@ -6,6 +6,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import sharp from "sharp";
 
 import { EventLiteClient } from "./client.js";
 import {
@@ -33,6 +34,31 @@ if (!API_KEY) {
 
 // Initialize client
 const client = new EventLiteClient(API_URL, API_KEY);
+
+// Image compression settings
+const IMAGE_MAX_WIDTH = 400;
+const IMAGE_MAX_HEIGHT = 300;
+const IMAGE_QUALITY = 75;
+
+/**
+ * Compress an image from base64 to reduce context pollution
+ * Resizes to 400x300 max and converts to JPEG with 75% quality
+ */
+async function compressBase64Image(base64Data: string): Promise<string> {
+  // Remove data URL prefix if present
+  const base64Clean = base64Data.replace(/^data:image\/\w+;base64,/, "");
+  const inputBuffer = Buffer.from(base64Clean, "base64");
+
+  const compressedBuffer = await sharp(inputBuffer)
+    .resize(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT, {
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .jpeg({ quality: IMAGE_QUALITY })
+    .toBuffer();
+
+  return compressedBuffer.toString("base64");
+}
 
 // Create MCP server
 const server = new Server(
@@ -64,6 +90,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const input = listEventsSchema.parse(args);
         const result = await client.listEvents({
           status: input.status,
+          search: input.search,
+          city: input.city,
+          upcoming: input.upcoming,
           limit: input.limit,
         });
 
@@ -91,7 +120,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             const capacity = e.capacity
               ? `${e.confirmed_count || 0}/${e.capacity}`
               : `${e.confirmed_count || 0} inscrits`;
-            return `- **${e.title}** (${e.status})\n  📅 ${date}\n  👥 ${capacity}\n  🔗 Slug: ${e.slug}`;
+            const publicUrl = `${API_URL}/e/${e.slug}`;
+            return `- **${e.title}** (${e.status})\n  📅 ${date}\n  👥 ${capacity}\n  🔗 ${publicUrl}`;
           })
           .join("\n\n");
 
@@ -119,6 +149,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           minute: "2-digit",
         });
 
+        const publicUrl = `${API_URL}/e/${e.slug}`;
+
         const details = [
           `# ${e.title}`,
           e.subtitle ? `*${e.subtitle}*` : "",
@@ -131,6 +163,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           `**Registrations:** ${e.confirmed_count || 0} confirmed${e.capacity ? ` / ${e.capacity} capacity` : ""}`,
           e.waitlist_count ? `**Waitlist:** ${e.waitlist_count}` : "",
           "",
+          `**Public URL:** ${publicUrl}`,
           `**Slug:** ${e.slug}`,
           `**ID:** ${e.id}`,
         ]
@@ -151,12 +184,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const input = createEventSchema.parse(args);
         const result = await client.createEvent(input);
         const e = result.data;
+        const publicUrl = `${API_URL}/e/${e.slug}`;
 
         return {
           content: [
             {
               type: "text",
-              text: `✅ Event created successfully!\n\n**Title:** ${e.title}\n**Slug:** ${e.slug}\n**Status:** ${e.status}\n**ID:** ${e.id}\n\nTo publish it, use update_event with status: "PUBLISHED"`,
+              text: `✅ Event created successfully!\n\n**Title:** ${e.title}\n**URL:** ${publicUrl}\n**Status:** ${e.status}\n**ID:** ${e.id}\n\nTo publish it, use update_event with status: "PUBLISHED"`,
             },
           ],
         };
@@ -313,9 +347,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
         let result;
         if (input.base64) {
-          result = await client.uploadImageFromBase64(input.base64);
+          // Compress image before upload to reduce file size
+          const compressedBase64 = await compressBase64Image(input.base64);
+          result = await client.uploadImageFromBase64(compressedBase64);
         } else if (input.url) {
-          result = await client.uploadImageFromUrl(input.url);
+          // For URLs, download, compress, then upload
+          const response = await fetch(input.url);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image from URL: ${response.status}`);
+          }
+          const arrayBuffer = await response.arrayBuffer();
+          const base64 = Buffer.from(arrayBuffer).toString("base64");
+          const compressedBase64 = await compressBase64Image(base64);
+          result = await client.uploadImageFromBase64(compressedBase64);
         } else {
           throw new Error("Either 'url' or 'base64' must be provided");
         }

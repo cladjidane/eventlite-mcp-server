@@ -7,7 +7,7 @@ export const tools = [
   {
     name: "list_events",
     description:
-      "List all events. Can filter by status (DRAFT, PUBLISHED, CLOSED, CANCELLED). Returns event details including registration counts.",
+      "List and search events. Can filter by status, search by keyword, filter by city, or get only upcoming events.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -15,6 +15,18 @@ export const tools = [
           type: "string",
           enum: ["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"],
           description: "Filter events by status",
+        },
+        search: {
+          type: "string",
+          description: "Search in event title and description",
+        },
+        city: {
+          type: "string",
+          description: "Filter by city/location (e.g., 'Paris', 'Lyon')",
+        },
+        upcoming: {
+          type: "boolean",
+          description: "Only show future events (sorted by date)",
         },
         limit: {
           type: "number",
@@ -278,6 +290,9 @@ export const tools = [
 
 export const listEventsSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"]).optional(),
+  search: z.string().optional(),
+  city: z.string().optional(),
+  upcoming: z.boolean().optional(),
   limit: z.number().min(1).max(100).optional(),
 });
 
