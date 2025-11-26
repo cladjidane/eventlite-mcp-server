@@ -36,7 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "sharp": "^0.34.5",
+    "jimp": "^1.6.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {

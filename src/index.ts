@@ -6,7 +6,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import sharp from "sharp";
+import { Jimp } from "jimp";
 
 import { EventLiteClient } from "./client.js";
 import {
@@ -43,19 +43,25 @@ const IMAGE_QUALITY = 75;
 /**
  * Compress an image from base64 to reduce context pollution
  * Resizes to 400x300 max and converts to JPEG with 75% quality
+ * Uses Jimp (pure JavaScript, no native dependencies)
  */
 async function compressBase64Image(base64Data: string): Promise<string> {
   // Remove data URL prefix if present
   const base64Clean = base64Data.replace(/^data:image\/\w+;base64,/, "");
   const inputBuffer = Buffer.from(base64Clean, "base64");
 
-  const compressedBuffer = await sharp(inputBuffer)
-    .resize(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT, {
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .jpeg({ quality: IMAGE_QUALITY })
-    .toBuffer();
+  // Load image with Jimp
+  const image = await Jimp.read(inputBuffer);
+
+  // Resize to fit within max dimensions (maintain aspect ratio)
+  if (image.width > IMAGE_MAX_WIDTH || image.height > IMAGE_MAX_HEIGHT) {
+    image.scaleToFit({ w: IMAGE_MAX_WIDTH, h: IMAGE_MAX_HEIGHT });
+  }
+
+  // Get buffer as JPEG with quality setting
+  const compressedBuffer = await image.getBuffer("image/jpeg", {
+    quality: IMAGE_QUALITY,
+  });
 
   return compressedBuffer.toString("base64");
 }
